@@ -1,6 +1,4 @@
-import React from "react";
+import HomeContainer from "./HomeContainer";
 
-const Home:React.SFC = () =>
-     <div>home</div>
 
-export default Home;
+export default HomeContainer;
