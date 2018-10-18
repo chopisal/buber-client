@@ -16,7 +16,7 @@ const client = new ApolloClient({
             data: {
               auth: {
                 __typename: "Auth",
-                isLoggedIn: true
+                isLoggedIn: false
               }
             }
           });
