@@ -1,20 +1,23 @@
 import React from "react";
-import { MutationFn } from "react-apollo";
+import { Mutation, MutationFn } from "react-apollo";
 import { RouteComponentProps } from 'react-router-dom';
 import { toast } from "react-toastify";
-// import {} from "../../types/api";
+import {
+  startPhoneVerification,
+  startPhoneVerificationVariables
+} from "../../types/api";
 import PhoneLoginPresenter from "./PhoneLoginPresenter";
-// import { PHONE_SIGN_IN } from "./PhoneQueries";
+import { PHONE_SIGN_IN } from "./PhoneQueries";
 
 interface IState {
   countryCode: string;
   phoneNumber: string;
 }
 
-// class PhoneSignInMutation extends Mutation<
-//   startPhoneVerification,
-//   startPhoneVerificationVariables
-// > {}
+class PhoneSignInMutation extends Mutation<
+  startPhoneVerification,
+  startPhoneVerificationVariables
+> {}
 
 class PhoneLoginContainer extends React.Component<
   RouteComponentProps<any>,
@@ -27,26 +30,44 @@ class PhoneLoginContainer extends React.Component<
   };
 
   public render() {
-    // const { history } = this.props;
+    const { history } = this.props;
     const { countryCode, phoneNumber } = this.state;
     return (
-      <PhoneLoginPresenter 
-        countryCode={countryCode}
-        phoneNumber={phoneNumber}
-        onInputChange={this.onInputChange}
-        onSubmit={this.onSubmit}
-        loading={false}
-      />
+      <PhoneSignInMutation
+        mutation={PHONE_SIGN_IN}
+        variables={{
+          phoneNumber: `${countryCode}${phoneNumber}`
+        }}
+        onCompleted={data => {
+          const { StartPhoneVerification } = data;
+          const phone = `${countryCode}${phoneNumber}`;
+          if (StartPhoneVerification.ok) {
+            toast.success("SMS sent! Redirecting you...");
+            setTimeout(() => {
+              history.push({
+                pathname: "/verify-phone",
+                state: {
+                  phone
+                }
+              });
+            }, 2000);
+          }
+        }}
+      >
+        {(phoneMutation, { loading }) => {
+          this.phoneMutation = phoneMutation;
+          return (
+            <PhoneLoginPresenter 
+              countryCode={countryCode}
+              phoneNumber={phoneNumber}
+              onInputChange={this.onInputChange}
+              onSubmit={this.onSubmit}
+              loading={false}
+            />
+          );
+        }}
+      </PhoneSignInMutation>
     );
-      // <PhoneSignInMutation
-      //   mutation={PHONE_SIGN_IN}
-      //   variables={{
-      //     phoneNumber: `${countryCode}${phoneNumber}`
-      //   }}
-      //   onCompleted={data => {
-      //   }}
-      // >
-      // </PhoneSignInMutation>
   }
 
   public onInputChange: React.ChangeEventHandler<
