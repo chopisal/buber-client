@@ -40,6 +40,7 @@ class PhoneLoginContainer extends React.Component<
         }}
         onCompleted={data => {
           const { StartPhoneVerification } = data;
+          console.log("data=>", data);
           const phone = `${countryCode}${phoneNumber}`;
           if (StartPhoneVerification.ok) {
             toast.success("SMS sent! Redirecting you...");
@@ -50,7 +51,7 @@ class PhoneLoginContainer extends React.Component<
                   phone
                 }
               });
-            }, 2000);
+            }, 1000);
           }
         }}
       >
