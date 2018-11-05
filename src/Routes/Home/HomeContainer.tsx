@@ -11,6 +11,7 @@ class HomeContainer extends React.Component<any, IState> {
   }
 
   public render() {
+    console.log("HomeContainer");
     const { isMenuOpen } = this.state;
     return (
       <HomePresenter isMenuOpen={isMenuOpen} toggleMenu={this.toggleMenu}/>
