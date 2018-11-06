@@ -37,7 +37,6 @@ class EditAccountContainer extends React.Component<IProps, IState> {
     uploading: false
   };
   public render() {
-    console.log("EditAccountContainer");
     const { email, firstName, lastName, profilePhoto, uploading } = this.state;
     return (
       <ProfileQuery
@@ -90,10 +89,10 @@ class EditAccountContainer extends React.Component<IProps, IState> {
       this.setState({
         uploading: true
       });
-      this.setState({
-        [name]: value
-      } as any);
     }
+    this.setState({
+      [name]: value
+    } as any);
   }
 
   public updateFields = (data: {} | userProfile) => {
