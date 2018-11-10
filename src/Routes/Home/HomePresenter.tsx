@@ -1,8 +1,13 @@
 import React from "react";
+// import { MutationFn } from "react-apollo";
 import { Helmet } from "react-helmet";
 import Sidebar from "react-sidebar";
+import AddressBar from "../../Components/AddressBar";
+import Button from "../../Components/Button";
 import Menu from "../../Components/Menu";
 import styled from "../../typed-components";
+// import { userInfo } from 'os';
+import { userProfile } from 'src/types/api';
 
 const Container = styled.div``;
 
@@ -22,14 +27,49 @@ const MenuButton = styled.button`
   background-color: transparent;
 `;
 
+const Map = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+`;
+
+const ExtendedButton = styled(Button)`
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 10;
+  height: auto;
+  width: 80%;
+`;
+
+const RequestButton = ExtendedButton.extend`
+  bottom: 250px;
+`;
+
 interface IProps {
   isMenuOpen: boolean;
   toggleMenu: () => void;
+  loading: boolean;
+  mapRef: any;
+  data?: userProfile;
+  toAddress: string;
+  onAddressSubmit: () => void;
+  onInputChange: (evnet: React.ChangeEvent<HTMLInputElement>) => void;
+  price?: string;
 }
 
 const HomePresenter: React.SFC<IProps> = ({
   isMenuOpen,
-  toggleMenu
+  toggleMenu,
+  loading,
+  toAddress,
+  mapRef,
+  onInputChange,
+  onAddressSubmit,
+  data: { GetMyProfile: { user = null} = {} } = {},
+  price
 }) => (
   <Container>
     <Helmet>
@@ -47,7 +87,31 @@ const HomePresenter: React.SFC<IProps> = ({
         }
       }}
     >
-      <MenuButton onClick={toggleMenu}>|||</MenuButton>
+      {!loading && <MenuButton onClick={toggleMenu}>|||</MenuButton>}
+      {user &&
+        !user.isDriving && (
+          <>
+            <AddressBar
+              name={"toAddress"}
+              onChange={onInputChange}
+              value={toAddress}
+              onBlur={null}
+            />
+            <ExtendedButton
+              onClick={onAddressSubmit}
+              disabled={toAddress === ""}
+              value={price ? "Change address": "Pick Address"}
+            />
+          </>
+        )}
+      {price && (
+        <RequestButton
+          onClick={null}
+          disabled={toAddress === ""}
+          value={`Request Ride ($${price})`}
+        />
+      )}
+        <Map innerRef={mapRef} />
     </Sidebar>
   </Container>
 );
